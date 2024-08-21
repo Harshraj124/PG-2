@@ -1,0 +1,79 @@
+let startTime;
+let updatedTime;
+let difference;
+let timerInterval;
+
+let running = false;
+
+const startButton = document.getElementById('start');
+const stopButton = document.getElementById('stop');
+const resetButton = document.getElementById('reset');
+
+const minutesDisplay = document.getElementById('minutes');
+const secondsDisplay = document.getElementById('seconds');
+const millisecondsDisplay = document.getElementById('milliseconds');
+
+// Start the stopwatch
+startButton.addEventListener('click', () => {
+    if (!running) {
+        running = true;
+        startTime = new Date().getTime() - difference;
+        timerInterval = setInterval(updateTime, 10);
+
+        startButton.disabled = true;
+        stopButton.disabled = false;
+        resetButton.disabled = false;
+    }
+});
+
+// Stop the stopwatch
+stopButton.addEventListener('click', () => {
+    if (running) {
+        running = false;
+        clearInterval(timerInterval);
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    }
+});
+
+// Reset the stopwatch
+resetButton.addEventListener('click', () => {
+    running = false;
+    clearInterval(timerInterval);
+    difference = 0;
+    updateDisplay(0, 0, 0);
+
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = true;
+});
+
+// Update the time
+function updateTime() {
+    updatedTime = new Date().getTime();
+    difference = updatedTime - startTime;
+
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    const milliseconds = Math.floor((difference % 1000) / 10);
+
+    updateDisplay(minutes, seconds, milliseconds);
+}
+
+// Update the display
+function updateDisplay(minutes, seconds, milliseconds) {
+    minutesDisplay.textContent = padZero(minutes);
+    secondsDisplay.textContent = padZero(seconds);
+    millisecondsDisplay.textContent = padZero(milliseconds);
+}
+
+// Pad numbers with leading zero if needed
+function padZero(number) {
+    return number < 10 ? '0' + number : number;
+}
+
+// Initialize
+resetButton.disabled = true;
+stopButton.disabled = true;
+difference = 0;
